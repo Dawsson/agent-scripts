@@ -6,26 +6,42 @@ homepage: https://developer.1password.com/docs/cli/get-started/
 
 # 1Password CLI
 
-Secure secrets management via `op`. All `op` commands MUST run inside tmux.
+Secure secrets management via `op`.
 
 ## References
 
 - `references/get-started.md` (install + app integration + sign-in flow)
 - `references/cli-examples.md` (real `op` examples)
 
-## Setup
+## Prerequisites
 
-1. Check OS + shell.
-2. Verify CLI present: `op --version`.
-3. Confirm desktop app integration is enabled and the app is unlocked.
-4. REQUIRED: create a fresh tmux session for all `op` commands.
-5. Sign in inside tmux: `op signin` (expect app prompt).
-6. Verify: `op whoami` (must succeed before any secret read).
-7. If multiple accounts: use `--account` or `OP_ACCOUNT`.
+- 1Password desktop app installed, unlocked, and desktop app integration enabled.
+- `op` CLI installed: `brew install 1password-cli`
+- Verify: `op --version` and `op whoami`
 
-## tmux Session (required)
+## Reading Secrets
 
-The shell tool uses a fresh TTY per command. Always run `op` inside a dedicated tmux session.
+With desktop app integration, `op` works in any shell:
+
+```bash
+op read "op://Vault/Item/field"
+op read "op://Vault/Item/one-time password?attribute=otp"
+```
+
+## Injecting Secrets
+
+```bash
+# Run a command with secrets injected as env vars
+export DB_PASSWORD="op://app-prod/db/password"
+op run -- my-command
+
+# Template injection
+echo "password: {{ op://Vault/Item/password }}" | op inject
+```
+
+## npm Publish with OTP
+
+Use a tmux session for npm publish to avoid secrets in shell history.
 
 ```bash
 SOCKET_DIR="${TMPDIR:-/tmp}/agent-tmux-sockets"
@@ -34,17 +50,9 @@ SOCKET="$SOCKET_DIR/op-auth.sock"
 SESSION="op-auth-$(date +%Y%m%d-%H%M%S)"
 
 tmux -S "$SOCKET" new -d -s "$SESSION" -n shell
-tmux -S "$SOCKET" send-keys -t "$SESSION":0.0 -- "op signin" Enter
-tmux -S "$SOCKET" send-keys -t "$SESSION":0.0 -- "op whoami" Enter
 ```
 
-## npm Publish with OTP
-
-When publishing to npm and OTP is required:
-
-### Preferred: granular automation token + OTP
-
-Store a granular npm token in 1Password (item field `token`), plus TOTP if required.
+### With automation token + OTP
 
 ```bash
 TOKEN_REF='op://<Vault>/<Item>/token'
@@ -54,7 +62,7 @@ tmux -S "$SOCKET" send-keys -t "$SESSION":0.0 -- \
   "NODE_AUTH_TOKEN=\"\$(op read \"$TOKEN_REF\" | tr -d \"\\n\")\" npm publish --otp \"\$(op read \"$OTP_REF\" | tr -d \"\\n\")\"" Enter
 ```
 
-### If already logged in: OTP-only publish
+### Already logged in: OTP-only
 
 ```bash
 OTP_REF='op://<Vault>/<Item>/one-time password?attribute=otp'
@@ -62,21 +70,10 @@ tmux -S "$SOCKET" send-keys -t "$SESSION":0.0 -- \
   "npm publish --otp \"\$(op read \"$OTP_REF\" | tr -d \"\\n\")\"" Enter
 ```
 
-Tip: unset CI tokens so you don't accidentally override your local login:
-```bash
-env -u NPM_TOKEN -u NODE_AUTH_TOKEN npm whoami
-```
-
-### Verify
+### Verify + cleanup
 
 ```bash
-npm whoami
 npm view <pkg> version
-```
-
-### Cleanup
-
-```bash
 tmux -S "$SOCKET" kill-session -t "$SESSION"
 rm -f "$SOCKET"
 ```
@@ -85,6 +82,5 @@ rm -f "$SOCKET"
 
 - Never paste secrets into logs, chat, or code.
 - Prefer `op run` / `op inject` over writing secrets to disk.
-- `tr -d "\n"` on all `op read` calls to avoid accidental extra submits.
-- Don't `tmux capture-pane` after pasting OTP (it may echo).
-- Do not run `op` outside tmux; stop and ask if tmux is unavailable.
+- `tr -d "\n"` on `op read` calls to avoid accidental extra submits.
+- Don't `tmux capture-pane` right after pasting OTP (it may echo).
