@@ -1,6 +1,6 @@
 ---
 name: 1password
-description: Use 1Password CLI (op) for secrets management, npm publish with OTP, API keys, and secure credential injection. Use when publishing to npm, reading secrets, or any task requiring authentication tokens.
+description: Use 1Password CLI (op) for secrets management, npm publish with passkey auth, API keys, and secure credential injection. Use when publishing to npm, reading secrets, or any task requiring authentication tokens.
 homepage: https://developer.1password.com/docs/cli/get-started/
 ---
 
@@ -25,7 +25,6 @@ With desktop app integration, `op` works in any shell:
 
 ```bash
 op read "op://Vault/Item/field"
-op read "op://Vault/Item/one-time password?attribute=otp"
 ```
 
 ## Injecting Secrets
@@ -39,48 +38,42 @@ op run -- my-command
 echo "password: {{ op://Vault/Item/password }}" | op inject
 ```
 
-## npm Publish with OTP
+## npm Publish with Passkey Auth
 
-Use a tmux session for npm publish to avoid secrets in shell history.
+npm uses passkey/browser-based auth — **cannot be automated**. The user must authenticate in the browser.
 
-```bash
-SOCKET_DIR="${TMPDIR:-/tmp}/agent-tmux-sockets"
-mkdir -p "$SOCKET_DIR"
-SOCKET="$SOCKET_DIR/op-auth.sock"
-SESSION="op-auth-$(date +%Y%m%d-%H%M%S)"
+### Flow
 
-tmux -S "$SOCKET" new -d -s "$SESSION" -n shell
-```
-
-### With automation token + OTP
+1. Agent prepares the package (build, version bump, changelog).
+2. Agent opens a new interactive Ghostty window with the publish command:
 
 ```bash
-TOKEN_REF='op://<Vault>/<Item>/token'
-OTP_REF='op://<Vault>/<Item>/one-time password?attribute=otp'
-
-tmux -S "$SOCKET" send-keys -t "$SESSION":0.0 -- \
-  "NODE_AUTH_TOKEN=\"\$(op read \"$TOKEN_REF\" | tr -d \"\\n\")\" npm publish --otp \"\$(op read \"$OTP_REF\" | tr -d \"\\n\")\"" Enter
+# Opens a new Ghostty window running npm publish in the package dir
+open -na Ghostty.app --args -e bash -c "cd /path/to/package && npm publish; echo '--- done ---'; exec bash"
 ```
 
-### Already logged in: OTP-only
-
-```bash
-OTP_REF='op://<Vault>/<Item>/one-time password?attribute=otp'
-tmux -S "$SOCKET" send-keys -t "$SESSION":0.0 -- \
-  "npm publish --otp \"\$(op read \"$OTP_REF\" | tr -d \"\\n\")\"" Enter
-```
-
-### Verify + cleanup
+3. npm prints an auth URL in the Ghostty window, e.g.:
+   ```
+   npm notice Login required.
+   npm notice Visit https://www.npmjs.com/auth/... to continue.
+   ```
+4. **User**: click the URL, authenticate with passkey in browser.
+5. Publish completes automatically once passkey is verified.
+6. Agent verifies:
 
 ```bash
 npm view <pkg> version
-tmux -S "$SOCKET" kill-session -t "$SESSION"
-rm -f "$SOCKET"
 ```
+
+### Notes
+
+- Pass the exact package dir to the `cd` command — don't assume CWD.
+- Use `bun publish` if the repo uses bun; same passkey flow applies.
+- After opening Ghostty, tell the user: *"A Ghostty window just opened running `npm publish`. Authenticate with your passkey when the browser prompt appears."*
+- Wait for user to confirm publish is done before running the verify step.
 
 ## Guardrails
 
 - Never paste secrets into logs, chat, or code.
 - Prefer `op run` / `op inject` over writing secrets to disk.
-- `tr -d "\n"` on `op read` calls to avoid accidental extra submits.
-- Don't `tmux capture-pane` right after pasting OTP (it may echo).
+- Passkey auth cannot be bypassed or automated — always hand off to the user.

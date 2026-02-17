@@ -40,11 +40,11 @@ End-to-end release workflow: changelog curation, GitHub release creation, npm pu
 
 ## npm Publish
 
-- Assume login is set up; publish may require 6-digit OTP.
-- If OTP is in 1Password, use the `1password` skill's npm publish workflow.
+- npm uses passkey/browser auth — requires user interaction.
+- Use the `1password` skill's **npm Publish with Passkey Auth** section.
+- Open a Ghostty window with the publish command; user authenticates via browser passkey.
 - Verify after publish:
   ```bash
-  npm whoami
   npm view <pkg> version
   ```
 
