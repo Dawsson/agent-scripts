@@ -103,18 +103,6 @@ hotline cmd get-state --key <key>       # verify state
 - Commit as you go — after completing a meaningful unit of work, commit it.
 - Never push unless explicitly asked.
 
-## Issues
-File-based tracker in `.issues/`. Markdown files with YAML frontmatter.
-
-```bash
-bun scripts/issues.ts list [--status=<s>]   # list issues
-bun scripts/issues.ts show <id>              # show issue details
-bun scripts/issues.ts status <id> <status>   # update status
-bun scripts/issues.ts create "<title>"       # create new issue
-```
-
-Statuses: `pending`, `in_progress`, `blocked`, `review`, `done`.
-
 ## Critical Thinking
 - Fix root cause (not band-aid).
 - Unsure: read more code; if still stuck, ask w/ short options.
@@ -185,7 +173,7 @@ Read `~/projects/agent-scripts/tools.md` for the full tool catalog.
 
 ### Slash Commands
 - Repo-local: `.claude/commands/`. Global: `~/.claude/commands/`.
-- Available: `/handoff`, `/pickup`, `/fixissue`, `/landpr`, `/acceptpr`, `/raise`, `/issue`, `/deploy`.
+- Available: `/handoff`, `/pickup`, `/fixissue`, `/landpr`, `/acceptpr`, `/raise`.
 
 ### tmux
 - Use for persistent sessions (debugger/server/subagent).
