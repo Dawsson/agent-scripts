@@ -1,130 +1,179 @@
 # Tools Reference
 
-CLI tools available on Peter's machines. Use these for agentic tasks.
+CLI tools available on Dawson's machines. Use these for agentic tasks.
 
-## bird 🐦
-Twitter/X CLI for posting, replying, reading tweets.
+## committer
+Commit helper script. Stages only the listed files; blocks `.` to prevent staging entire repo.
 
-**Location**: `~/Projects/bird/bird`
+**Location**: `scripts/committer` (also on PATH)
 
-**Commands**:
 ```bash
-bird tweet "<text>"                    # Post a tweet
-bird reply <tweet-id-or-url> "<text>"  # Reply to a tweet
-bird read <tweet-id-or-url>            # Fetch tweet content
-bird replies <tweet-id-or-url>         # List replies to a tweet
-bird thread <tweet-id-or-url>          # Show full conversation thread
-bird search "<query>" [-n count]       # Search tweets
-bird mentions [-n count]               # Find tweets mentioning @clawdbot
-bird whoami                            # Show logged-in account
-bird check                             # Show credential sources
+committer "feat: add login flow" src/login.ts src/auth.ts
+committer --force "fix: resolve lock" file.ts  # removes stale index.lock on failure
 ```
-
-**Auth**: Uses Firefox cookies by default. Pass `--firefox-profile <name>` to switch.
 
 ---
 
-## sonoscli 🔊
-Control Sonos speakers over local network (UPnP/SOAP).
+## trash
+Move files to macOS Trash instead of `rm`.
 
-**Location**: `~/Projects/sonoscli/bin/sonos`
-
-**Commands**:
 ```bash
-sonos discover                         # Find speakers on network
-sonos status --name "Room"             # Current playback status
-sonos play/pause/stop --name "Room"    # Playback control
-sonos next/prev --name "Room"          # Track navigation
-sonos volume get/set --name "Room" 25  # Volume control
-sonos mute get/toggle --name "Room"    # Mute control
-
-# Grouping
-sonos group status                     # Show current groups
-sonos group join --name "A" --to "B"   # Join A into B's group
-sonos group unjoin --name "Room"       # Make standalone
-sonos group party --to "Room"          # Join all to one group
-
-# Spotify (via SMAPI)
-sonos smapi search --service "Spotify" --category tracks "query"
-sonos open --name "Room" spotify:track:<id>
+trash file.ts old-dir/
 ```
-
-**Known issues**:
-- SSDP multicast may fail; use `--ip <speaker-ip>` as fallback
-- Default HTTP keep-alives can cause timeouts (fix pending: DisableKeepAlives)
 
 ---
 
-## peekaboo 👀
-Screenshot, screen inspection, and click automation.
+## peekaboo
+Screenshot, screen inspection, and click automation for macOS.
 
-**Location**: `~/Projects/Peekaboo`
+**Location**: `~/projects/Peekaboo`
 
-**Commands**:
 ```bash
-peekaboo capture                       # Take screenshot
-peekaboo see                           # Describe what's on screen (OCR)
-peekaboo click                         # Click at coordinates
-peekaboo list                          # List windows/apps
-peekaboo tools                         # Show available tools
-peekaboo permissions status            # Check TCC permissions
+peekaboo capture                       # take screenshot
+peekaboo see                           # describe what's on screen (OCR)
+peekaboo click                         # click at coordinates
+peekaboo list                          # list windows/apps
 ```
 
 **Requirements**: Screen Recording + Accessibility permissions.
 
-**Docs**: `~/Projects/Peekaboo/docs/commands/`
+Use for macOS-level screenshots and visual review of simulator windows.
 
 ---
 
-## sweetistics 📊
-Twitter/X analytics desktop app (Tauri).
+## agent-device
+iOS simulator and Android emulator automation. XCTest-backed accessibility tree.
 
-**Location**: `~/Projects/sweetistics`
+**Location**: `~/.agents/skills/agent-device`
 
-Use for deeper Twitter data analysis beyond what `bird` provides.
-
----
-
-## clawdis 📡
-WhatsApp/Telegram messaging gateway and agent interface.
-
-**Location**: `~/Projects/clawdis`
-
-**Commands**:
 ```bash
-clawdis login                          # Link WhatsApp via QR
-clawdis send --to <number> --message "text"  # Send message
-clawdis agent --message "text"         # Talk to agent directly
-clawdis gateway                        # Run WebSocket gateway
-clawdis status                         # Session health
+# iOS simulator
+agent-device describe-ui --udid <sim-id>
+agent-device tap --udid <sim-id> -x 100 -y 200
+agent-device type --udid <sim-id> "hello"
+agent-device scroll --udid <sim-id> --direction down
+agent-device list-simulators
+```
+
+The right tool for Expo dev builds on simulator.
+
+---
+
+## hotline
+WebSocket dev bridge between agents and running React Native apps.
+
+**Location**: `~/.agents/skills/hotline` (port 8675, runs via launchd)
+
+```bash
+hotline cmd <type> --key value       # send command with inline args
+hotline wait <event>                 # block until app emits event
+hotline wait-for-app [appId]         # block until app connects
+hotline watch                        # interactive TUI
+hotline query <key>                  # shorthand for get-state
 ```
 
 ---
 
-## oracle 🧿
-Hand prompts + files to other AIs (GPT-5 Pro, etc.).
+## claude-in-chrome
+Browser automation via MCP. Available in Claude Code sessions with the extension installed.
 
-**Usage**: `npx -y @steipete/oracle --help` (run once per session to learn syntax)
+Use for web app testing, form filling, visual verification of Next.js apps.
+
+---
+
+## oracle
+Hand prompts + files to a second AI model for review/second opinion.
+
+```bash
+npx -y @anthropic/oracle --help      # run once per session to learn syntax
+```
 
 ---
 
 ## gh
 GitHub CLI for PRs, issues, CI, releases.
 
-**Usage**: `gh help`
-
-When someone shares a GitHub URL, use `gh` to read it:
 ```bash
 gh issue view <url> --comments
 gh pr view <url> --comments --files
 gh run list / gh run view <id>
 ```
 
+When someone shares a GitHub URL, use `gh` to read it (not web search).
+
 ---
 
 ## mcporter
 MCP server launcher for browser automation, web scraping.
 
-**Usage**: `npx mcporter --help`
+```bash
+npx mcporter --help
+npx mcporter <server>
+```
 
-Common servers: `iterm`, `firecrawl`, `XcodeBuildMCP`
+---
+
+## imageoptim
+Image optimization CLI. Lossless compression for PNGs/JPGs.
+
+```bash
+imageoptim <file>
+```
+
+Install: `brew install imageoptim-cli`
+
+---
+
+## 1password (op)
+Secrets management via 1Password CLI. Use for npm publish OTP, API keys, etc.
+
+```bash
+op signin
+op whoami
+op read "op://Vault/Item/field"
+```
+
+See `docs/npm-publish-with-1password.md` for npm publish workflow.
+
+---
+
+## clawdis
+WhatsApp/Telegram messaging gateway and agent interface.
+
+**Location**: `~/projects/clawdis`
+
+```bash
+clawdis login                          # link WhatsApp via QR
+clawdis send --to <number> --message "text"
+clawdis agent --message "text"         # talk to agent directly
+clawdis gateway                        # run WebSocket gateway
+clawdis status                         # session health
+```
+
+---
+
+## bin/docs-list / scripts/docs-list.ts
+Lists `docs/` directory and enforces front-matter on doc files.
+
+```bash
+bin/docs-list                          # run compiled binary
+bun build scripts/docs-list.ts --compile --outfile bin/docs-list  # rebuild
+```
+
+---
+
+## bin/browser-tools / scripts/browser-tools.ts
+Chrome DevTools helper for headless browser automation.
+
+```bash
+bin/browser-tools start                # launch Chrome with debugging
+bin/browser-tools nav <url>            # navigate
+bin/browser-tools eval "document.title" # run JS
+bin/browser-tools screenshot           # capture page
+bin/browser-tools pick <selector>      # extract element
+bin/browser-tools cookies              # list cookies
+bin/browser-tools inspect              # DOM inspection
+bin/browser-tools kill                 # close Chrome
+```
+
+Rebuild: `bun build scripts/browser-tools.ts --compile --target bun --outfile bin/browser-tools`
