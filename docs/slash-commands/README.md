@@ -9,10 +9,8 @@ Slash commands are reusable prompt templates. They live in `.claude/commands/` (
 
 ## Available commands
 - `/acceptpr` — Land one PR end-to-end (changelog + thanks, lint, merge, back to main).
-- `/deploy` — Deploy to Cloudflare Workers via Wrangler.
 - `/fixissue` — Fix an issue end-to-end (tests, changelog, commit, push, comment, close).
 - `/handoff` — Capture current state for the next agent (running sessions, tmux targets, blockers, next steps).
-- `/issue` — Work on a project issue from the `.issues/` backlog.
 - `/landpr` — Land PR via temp-branch rebase + full gate before commit; merge via `gh pr merge` and verify `MERGED`.
 - `/pickup` — Rehydrate context when starting work (status, tmux sessions, CI/PR state).
 - `/raise` — If changelog is released, open next patch `Unreleased` section (commit + push `CHANGELOG.md`).

@@ -9,8 +9,7 @@ summary: Timeline of changes to agent-scripts.
 - Rewrote AGENTS.md for Dawson's stack (Bun, TypeScript, Expo, Next.js, Hono/ORPC, Cloudflare Workers).
 - Created CLAUDE.md as symlink to AGENTS.md.
 - Rewrote tools.md: removed bird/sonoscli/sweetistics/xcp/xcodegen, added agent-device/hotline/imageoptim/1password/claude-in-chrome.
-- Added file-based issue tracker (`scripts/issues.ts` + `.issues/`).
-- Added `.claude/commands/` with slash command prompts: handoff, pickup, fixissue, landpr, acceptpr, raise, issue, deploy.
+- Added `.claude/commands/` with slash command prompts: handoff, pickup, fixissue, landpr, acceptpr, raise.
 - Removed skills: swiftui-view-refactor, domain-dns-ops.
 - Removed scripts: shazam-song, trash.ts, release/sparkle_lib.sh.
 - Removed docs: RELEASING-MAC.md, mac-app.md, concurrency.md, windows.md, sectriage.md.

@@ -11,7 +11,6 @@ Dawson's agent orchestration hub. Canonical config for AI coding agents (Claude 
 - **`skills/`** — Reusable skill definitions for AI agents.
 - **`docs/`** — Workflow docs (releasing, subagents, slash commands).
 - **`.claude/commands/`** — Slash command prompts for Claude Code.
-- **`.issues/`** — File-based issue tracker.
 
 ## Stack
 
@@ -22,11 +21,6 @@ TypeScript everywhere. Bun runtime. Expo/React Native for mobile. Next.js for we
 ```bash
 # Commit helper (stages only listed files, blocks ".")
 scripts/committer "feat: add feature" file1.ts file2.ts
-
-# Issue tracker
-bun scripts/issues.ts create "Add dark mode"
-bun scripts/issues.ts list
-bun scripts/issues.ts status 001 in_progress
 
 # Docs lister
 bun scripts/docs-list.ts
