@@ -1,39 +1,60 @@
 ---
-summary: 'Multi-agent system directives and coordination rules. Master reference for agent behavior.'
+summary: 'Subagent coordination rules and tmux-based agent sessions.'
 read_when:
   - Coordinating subagents or running tmux-based agent sessions.
 ---
 
-# Claude Subagent Quickstart
+# Claude Code Subagent Quickstart
 
 ## CLI Basics
-- Launch long-running subagents inside tmux so the session can persist. Example:
+- Launch long-running subagents inside tmux so the session can persist:
 
   ```bash
   tmux new-session -d -s claude-haiku 'claude --model haiku'
   tmux attach -t claude-haiku
   ```
 
-  Once inside the session, run `/model` to confirm the active alias (`haiku` maps to Claude 3.5 Haiku) and switch models if needed.
-- Need to queue instructions without attaching? Use `bun scripts/agent-send.ts --session <name> -- "your command"` to inject text into a running agent session (single Enter is sent by default).
-- Always switch to the fast Haiku model upfront (`claude --model haiku --dangerously-skip-permissions …` or `/model haiku` in-session) to keep turnaround fast.
-- Two modes:
-  - **One-shot tasks** (single summary, short answer): run `claude --model haiku --dangerously-skip-permissions --print …` in a tmux session, wait with `sleep 30`, then read the output buffer.
-  - **Interactive tasks** (multi-file edits, iterative prompts): start `claude --model haiku --dangerously-skip-permissions` in tmux, send prompts with `tmux send-keys`, and capture completed responses with `tmux capture-pane`. Expect to sleep between turns so Haiku can finish before you scrape the pane.
-- Ralph’s supervisor loop launches Claude the same way (`claude --dangerously-skip-permissions "<prompt>"`) to keep the tmux automation flowing.
+- One-shot tasks: `claude --model haiku --dangerously-skip-permissions --print "…"`
+- Interactive tasks: start in tmux, send prompts with `tmux send-keys`, capture with `tmux capture-pane`.
+- Default to fast Haiku model for subagent work.
 
 ## One-Shot Prompts
-- The CLI accepts the prompt as a trailing argument in one-shot mode. Multi-line prompts can be piped: `echo "..." | claude --print`.
-- Add `--output-format json` when you need structured fields (e.g., summary + bullets) for post-processing.
-- Keep prompts explicit about reading full files: “Read docs/example.md in full and produce a 2–3 sentence summary covering all sections.”
+- The CLI accepts the prompt as a trailing argument in one-shot mode. Multi-line via pipe: `echo "..." | claude --print`.
+- Add `--output-format json` for structured output.
+- Be explicit about reading full files: "Read docs/example.md in full and produce a 2-3 sentence summary."
 
-## Bulk Markdown Conversion
-- Produce the markdown inventory first (`pnpm run docs:list`) and feed batches of filenames to your Claude session.
-- For each batch, issue a single instruction like “Rewrite these files with YAML front matter summaries, keep all other content verbatim.” Haiku can loop over multi-file edits when you provide the explicit list.
-- After Claude reports success, diff each file locally (`git diff docs/<file>.md`) before moving to the next batch.
+## tmux Session Management
 
-## Ralph Integration Notes
-- Ralph (see `scripts/ralph.ts`) spins up tmux sessions, auto-wakes the worker, and calls Claude as the supervisor via `claude --dangerously-skip-permissions`.
-- Supervisor responses must end with either `CONTINUE`, `SEND: <message>`, or `RESTART`; Ralph parses these tokens to decide the next action.
-- To start Ralph manually: `bun scripts/ralph.ts start --goal "…" [--markdown path]`. Progress is tracked in `.ralph/progress.md` by default.
-- Send ad-hoc instructions to the worker session with `bun scripts/ralph.ts send-to-worker -- "your guidance"`.
+```bash
+# Start a named session
+tmux new-session -d -s agent-shell
+
+# Send a command to the session
+tmux send-keys -t agent-shell "bun test" Enter
+
+# Capture output
+tmux capture-pane -p -J -t agent-shell:0.0 -S -200
+
+# List all sessions
+tmux list-sessions
+
+# Kill when done
+tmux kill-session -t agent-shell
+```
+
+## Multi-Agent Coordination
+- Each agent should check `git status/diff` before making edits.
+- Ship small, focused commits with specific file paths (never `git add .`).
+- Use `committer` to enforce explicit file listing.
+- If you see uncommitted changes you didn't make, another agent is working — leave them alone.
+
+## Hotline Integration
+Agents can interact with running React Native apps via the hotline dev bridge:
+
+```bash
+hotline wait-for-app                    # block until app reconnects after hot reload
+hotline wait error --timeout 3000 || true  # check for crashes
+hotline cmd get-state --key <key>       # verify app state
+```
+
+See AGENTS.md "Hotline" section for full command reference.
