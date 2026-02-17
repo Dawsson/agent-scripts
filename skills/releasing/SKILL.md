@@ -40,13 +40,31 @@ End-to-end release workflow: changelog curation, GitHub release creation, npm pu
 
 ## npm Publish
 
-- npm uses passkey/browser auth — requires user interaction.
-- Use the `1password` skill's **npm Publish with Passkey Auth** section.
-- Open a Ghostty window with the publish command; user authenticates via browser passkey.
-- Verify after publish:
-  ```bash
-  npm view <pkg> version
-  ```
+npm uses passkey/browser-based auth — **cannot be automated**. The user must authenticate in the browser.
+
+### Flow
+
+1. Agent prepares the package (build, version bump, changelog, tag).
+2. Agent opens a new interactive Ghostty window with the publish command:
+
+```bash
+open -na Ghostty.app --args -e bash -c "cd /path/to/package && npm publish; echo '--- done ---'"
+```
+
+3. npm prints an auth URL in the Ghostty window — user clicks it, authenticates with passkey in browser.
+4. Publish completes; window closes automatically.
+5. Agent verifies:
+
+```bash
+npm view <pkg> version
+```
+
+### Notes
+
+- Pass the exact package dir — don't assume CWD.
+- Use `bun publish` if the repo uses bun; same passkey flow applies.
+- After opening Ghostty, tell the user: *"A Ghostty window opened running `npm publish`. Authenticate with your passkey when prompted."*
+- Wait for user to confirm before running the verify step.
 
 ## Post-Release
 
