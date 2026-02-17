@@ -30,6 +30,9 @@ Work style: telegraph; noun-phrases ok; drop grammar; min tokens.
 - **Agent runtime**: Claude Code (primary), Codex (secondary).
 - Follow each repo's own stack/framework choices — don't assume.
 
+## Important Locations
+<!-- Add key paths as projects grow: blog, notes, config dirs, etc. -->
+
 ## Hotline (Dev Bridge)
 Port 8675, runs via launchd. WebSocket bridge between agents and running React Native apps.
 
@@ -86,6 +89,7 @@ hotline cmd get-state --key <key>       # verify state
 - `git checkout` ok for PR review / explicit request.
 - Branch changes require user consent.
 - Destructive ops forbidden unless explicit (`reset --hard`, `clean`, `restore`, `rm`, …).
+- Remotes: prefer HTTPS; flip SSH->HTTPS before pull/push if needed.
 - **NEVER use raw `git add` or `git commit`**. Always use `committer "message" file1 file2`. It enforces explicit file listing and prevents staging the entire repo. If repo has `./scripts/committer`, use that; otherwise use the one on PATH.
 - Don't delete/rename unexpected stuff; stop + ask.
 - No repo-wide S/R scripts; keep edits small/reviewable.
@@ -97,11 +101,16 @@ hotline cmd get-state --key <key>       # verify state
 - Commit as you go — after completing a meaningful unit of work, commit it.
 - Never push unless explicitly asked.
 
+## macOS Permissions / Signing (TCC)
+- Never re-sign / ad-hoc sign / change bundle ID as "debug" without explicit ok (can mess TCC).
+- Native modules (Expo): don't modify entitlements or provisioning without asking.
+
 ## Critical Thinking
 - Fix root cause (not band-aid).
 - Unsure: read more code; if still stuck, ask w/ short options.
 - Conflicts: call out; pick safer path.
 - Unrecognized changes: assume other agent; keep going; focus your changes. If causes issues, stop + ask user.
+- Leave breadcrumb notes in thread.
 
 ## Multi-Agent Safety
 - Check `git status/diff` before edits.
