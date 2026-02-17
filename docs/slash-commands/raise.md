@@ -10,7 +10,7 @@ Goal: If `CHANGELOG.md` top release is dated (not `Unreleased`), create a new to
 0) Guardrails
 - Must be on `main` (or repo default) and `git status -sb` clean.
 - If `CHANGELOG.md` already starts with `## <version> — Unreleased`: stop (nothing to do).
-- If the top `##` version can’t be parsed as `X.Y.Z`: stop + ask.
+- If the top `##` version can't be parsed as `X.Y.Z`: stop + ask.
 
 1) Compute next patch
 - In `CHANGELOG.md`, find the first header like: `## X.Y.Z — <date|Unreleased>`.

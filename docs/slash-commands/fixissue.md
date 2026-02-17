@@ -11,9 +11,11 @@ Do (in order):
 1) Take your time, fix it properly, refactor if necessary.
 2) Add regression tests and run them.
 3) Add a changelog entry.
-4) Commit, pull, and push.
+4) Commit via `committer`, pull, and push.
 5) Comment on the issue with what changed and close it.
+   - If using `.issues/` tracker: `bun scripts/issues.ts status <id> done`
+   - If using GitHub Issues: `gh issue comment <num> --body "…"` + `gh issue close <num>`
 
-If the issue URL/number isn’t provided, ask for it before the changelog/comment steps.
+If the issue URL/number isn't provided, ask for it before the changelog/comment steps.
 
-Location: global prompt lives in `~/.codex/prompts/fixissue.md`; this file mirrors it for easy edits.
+Location: `.claude/commands/fixissue.md` (repo-local) or `~/.claude/commands/fixissue.md` (global).

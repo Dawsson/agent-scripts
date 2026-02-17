@@ -15,7 +15,7 @@ Goal
 
 0) Guardrails
 - `git status -sb` clean (no local changes).
-- If PR is draft, has conflicts, or you can’t push to head branch: stop + ask.
+- If PR is draft, has conflicts, or you can't push to head branch: stop + ask.
 - Prefer repo default branch as base (often `main`).
 
 1) Capture PR context
@@ -51,7 +51,7 @@ git rebase "temp/landpr-$prnum"
 - Update `CHANGELOG.md`: include `#$prnum` + thanks `@$contrib`.
 
 5) Gate (before commit)
-- Run full repo gate (lint/typecheck/tests/docs). Example: `pnpm lint && pnpm build && pnpm test`.
+- Run full repo gate (lint/typecheck/tests). Example: `bun lint && bun build && bun test`.
 
 6) Commit (via `committer`)
 
@@ -95,7 +95,7 @@ Thanks @$contrib!"
 11) Verify state == `MERGED`
 
 ```sh
-gh pr view "$PR" --json state,mergedAt --jq '.state + \" @ \" + .mergedAt'
+gh pr view "$PR" --json state,mergedAt --jq '.state + " @ " + .mergedAt'
 ```
 
 12) Cleanup
