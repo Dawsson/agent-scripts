@@ -21,20 +21,14 @@ Work style: telegraph; noun-phrases ok; drop grammar; min tokens.
 - New deps: quick health check (recent releases/commits, adoption).
 - Slash cmds: `.claude/commands/` (repo-local) or `~/.claude/commands/` (global).
 - Web: search early; quote exact errors; prefer 2025–2026 sources.
-- Oracle: run `npx -y @anthropic/oracle --help` once/session before first use.
+- Oracle: run `npx -y @steipete/oracle --help` once/session before first use.
 - Style: telegraph. Drop filler/grammar. Min tokens (global AGENTS + replies).
 
-## Stack
-- **Runtime**: Bun (never npm/pnpm/yarn).
-- **Language**: TypeScript everywhere.
-- **Mobile**: Expo / React Native.
-- **Web**: Next.js (App Router).
-- **API**: Hono + ORPC on Cloudflare Workers.
-- **Monorepo**: Turborepo.
-- **DB**: Drizzle ORM.
-- **Models**: Claude Opus 4.6, Claude Sonnet 4.6, Claude Codex 5.3.
-- **Agent runtime**: Claude Code (primary), Codex (secondary).
+## Defaults
 - **Package manager**: `bun` — always. Never `npm`, `pnpm`, `yarn`.
+- **Language**: TypeScript (unless repo says otherwise).
+- **Agent runtime**: Claude Code (primary), Codex (secondary).
+- Follow each repo's own stack/framework choices — don't assume.
 
 ## Hotline (Dev Bridge)
 Port 8675, runs via launchd. WebSocket bridge between agents and running React Native apps.
@@ -156,7 +150,7 @@ Read `~/projects/agent-scripts/tools.md` for the full tool catalog.
 
 ### oracle
 - Bundle prompt+files for 2nd model. Use when stuck/buggy/review.
-- Run `npx -y @anthropic/oracle --help` once/session (before first use).
+- Run `npx -y @steipete/oracle --help` once/session (before first use).
 
 ### mcporter
 - MCP launcher: `npx mcporter <server>` (see `npx mcporter --help`).
