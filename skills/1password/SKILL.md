@@ -49,7 +49,7 @@ npm uses passkey/browser-based auth — **cannot be automated**. The user must a
 
 ```bash
 # Opens a new Ghostty window running npm publish in the package dir
-open -na Ghostty.app --args -e bash -c "cd /path/to/package && npm publish; echo '--- done ---'; exec zsh"
+open -na Ghostty.app --args -e bash -c "cd /path/to/package && npm publish; echo '--- done ---'"
 ```
 
 3. npm prints an auth URL in the Ghostty window, e.g.:
