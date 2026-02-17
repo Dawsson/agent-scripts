@@ -92,7 +92,7 @@ hotline cmd get-state --key <key>       # verify state
 - `git checkout` ok for PR review / explicit request.
 - Branch changes require user consent.
 - Destructive ops forbidden unless explicit (`reset --hard`, `clean`, `restore`, `rm`, …).
-- Commit helper on PATH: `committer` (bash). Prefer it; if repo has `./scripts/committer`, use that.
+- **NEVER use raw `git add` or `git commit`**. Always use `committer "message" file1 file2`. It enforces explicit file listing and prevents staging the entire repo. If repo has `./scripts/committer`, use that; otherwise use the one on PATH.
 - Don't delete/rename unexpected stuff; stop + ask.
 - No repo-wide S/R scripts; keep edits small/reviewable.
 - Avoid manual `git stash`; if Git auto-stashes during pull/rebase, that's fine.
@@ -113,7 +113,7 @@ hotline cmd get-state --key <key>       # verify state
 - Check `git status/diff` before edits.
 - Ship small, focused commits with specific file paths (never `git add .`).
 - If you see uncommitted changes you didn't make, another agent is working — leave them alone.
-- Use `committer` for all commits (enforces explicit file listing).
+- All commits go through `committer` — no exceptions.
 - Blast radius thinking: prefer small isolated changes over sweeping refactors.
 
 ## Prompting (Claude 4.6+ Best Practices)
