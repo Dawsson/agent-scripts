@@ -169,7 +169,7 @@ Read `~/projects/agent-scripts/tools.md` for the full tool catalog.
 
 ### 1password (op)
 - Secrets management. Use for npm publish OTP, API keys, etc.
-- See `docs/npm-publish-with-1password.md`.
+- Auto-discovered as a skill; includes full npm publish workflow.
 
 ### Slash Commands
 - Repo-local: `.claude/commands/`. Global: `~/.claude/commands/`.
