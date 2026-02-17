@@ -176,7 +176,7 @@ Read `~/projects/agent-scripts/tools.md` for the full tool catalog.
 
 ### Slash Commands
 - Repo-local: `.claude/commands/`. Global: `~/.claude/commands/`.
-- Available: `/handoff`, `/pickup`, `/fixissue`, `/landpr`, `/acceptpr`, `/raise`.
+- Available: `/handoff`, `/pickup`, `/landpr`, `/acceptpr`, `/raise`.
 
 ### tmux
 - Use for persistent sessions (debugger/server/subagent).
